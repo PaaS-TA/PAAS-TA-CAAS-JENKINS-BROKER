@@ -1,0 +1,50 @@
+server:
+  port: <%= p('server.port')%>
+
+spring:
+  application:
+    name: paas-ta-caas-jenkins-broker
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://<%= link('caas-haproxy-link').p('public_ip') %>:<%= link('caas-mariadb-link').p('port') %>/broker?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Seoul&useLegacyDatetimeCode=false
+    username: "<%= p('datasource.username')%>"
+    password: "<%= p('datasource.password')%>"
+    validationQuery: SELECT 1
+  jpa:
+    database: mysql
+    hibernate:
+      ddl-auto: <%= p('jpa.hibernate_ddl_auto')%>
+      naming:
+        strategy: org.hibernate.cfg.EJB3NamingStrategy
+    generate-ddl: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLInnoDBDialect
+        show_sql: <%= p('jpa.show_sql')%>
+        format_sql: true
+        use_sql_comments: true
+
+serviceDefinition:
+  id: <%= p('jenkins.serviceDefinition.id')%>
+  name: <%= p('jenkins.serviceDefinition.name')%>
+  desc: "<%= p('jenkins.serviceDefinition.desc')%>"
+  bindable: false
+  planupdatable: false
+  bullet:
+    name: <%= p('jenkins.serviceDefinition.bullet.name')%>
+    desc: <%= p('jenkins.serviceDefinition.bullet.desc')%>
+  plan1:
+    id: <%= p('jenkins.serviceDefinition.plan1.id')%>
+    name: <%= p('jenkins.serviceDefinition.plan1.name')%>
+    desc: <%= p('jenkins.serviceDefinition.plan1.desc')%>
+    type: <%= p('jenkins.serviceDefinition.plan1.type')%>
+
+jenkins:
+  deployment_file_path: "<%= p('jenkins.deployment_file_path')%>"
+  service_file_path: "<%= p('jenkins.service_file_path')%>"
+
+caas:
+  authorization:
+    id: <%= link('caas-common-api-link').p('authorization.id')%>
+    password: <%= link('caas-common-api-link').p('authorization.password')%>
+  api: http://<%= link('caas-haproxy-link').p('public_ip') %>:<%= link('caas-api-link').p('server.port') %>

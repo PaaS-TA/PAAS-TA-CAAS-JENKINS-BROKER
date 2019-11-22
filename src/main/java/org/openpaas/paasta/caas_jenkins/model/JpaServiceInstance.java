@@ -2,10 +2,15 @@ package org.openpaas.paasta.caas_jenkins.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.openpaas.servicebroker.model.*;
+import org.openpaas.servicebroker.model.CreateServiceInstanceRequest;
+import org.openpaas.servicebroker.model.ServiceInstance;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
 
 
 @Entity

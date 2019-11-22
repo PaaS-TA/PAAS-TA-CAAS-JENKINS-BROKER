@@ -6,7 +6,7 @@ spring:
     name: paas-ta-caas-jenkins-broker
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://<%= link('caas-haproxy-link').p('public_ip') %>:<%= link('caas-mariadb-link').p('port') %>/broker?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Seoul&useLegacyDatetimeCode=false
+    url: jdbc:mysql://<%= link('caas-mariadb-link').instances[0].address %>:<%= link('caas-mariadb-link').p('port') %>/broker?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Seoul&useLegacyDatetimeCode=false
     username: "<%= p('datasource.username')%>"
     password: "<%= p('datasource.password')%>"
     validationQuery: SELECT 1
@@ -42,9 +42,16 @@ serviceDefinition:
 jenkins:
   deployment_file_path: "<%= p('jenkins.deployment_file_path')%>"
   service_file_path: "<%= p('jenkins.service_file_path')%>"
+  namespace_file_path: "<%= p('jenkins.namespace_file_path')%>"
+  namespace: "<%= p('jenkins.namespace')%>"
+  secret_file_path: "<%= p('jenkins.secret_file_path')%>"
+  username: "<%= link('private-image-repository-link').p('image_repository.auth.username') %>"
+  password: "<%= p('jenkins.password')%>"
+  docker_repository_url: <%= link('private-image-repository-link').instances[0].address %>:<%= link('private-image-repository-link').p('image_repository.port') %>
 
 caas:
   authorization:
     id: <%= link('caas-common-api-link').p('authorization.id')%>
     password: <%= link('caas-common-api-link').p('authorization.password')%>
-  api: http://<%= link('caas-haproxy-link').p('public_ip') %>:<%= link('caas-api-link').p('server.port') %>
+  api: http://<%= link('caas-api-link').instances[0].address %>:<%= link('caas-api-link').p('server.port')%>
+  master_api: http://<%= p('caas.master_ip')%>

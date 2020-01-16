@@ -1,4 +1,4 @@
-package org.openpaas.paasta.ondemand.test;
+package org.openpaas.paasta.jenkins.test;
 
 import org.junit.Before;
 import org.junit.FixMethodOrder;

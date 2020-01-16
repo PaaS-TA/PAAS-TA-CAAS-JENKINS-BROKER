@@ -1,4 +1,4 @@
-package org.openpaas.paasta.ondemand.test;
+package org.openpaas.paasta.jenkins.test;
 
 import model.JpaServiceInstanceModel;
 import org.junit.Before;
@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class OnDemandInstanceServiceBindingTest {
+public class CaaSJenkinsInstanceServiceBindingTest {
 
     @InjectMocks
     CaaSServiceServiceBinding caaSServiceServiceBinding;

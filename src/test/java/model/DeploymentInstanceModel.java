@@ -73,12 +73,12 @@ public class DeploymentInstanceModel {
         v1.setApiVersion("apiVersion");
         v1 = v1.kind("kind");
         v1.setKind("kind");
-        v1 = v1.metadata(new KubeMetadataV1());
-        v1.setMetadata(new KubeMetadataV1());
-        v1 = v1.spec(new KubeDeploymentSpecV1());
-        v1.setSpec(new KubeDeploymentSpecV1());
-        v1 = v1.status(new KubeDeploymentStatusV1());
-        v1.setStatus(new KubeDeploymentStatusV1());
+        v1 = v1.metadata(getKubeMetadataV1());
+        v1.setMetadata(getKubeMetadataV1());
+        v1 = v1.spec(getKubeDeploymentSpecV1());
+        v1.setSpec(getKubeDeploymentSpecV1());
+        v1 = v1.status(getKubeDeploymentStatusV1());
+        v1.setStatus(getKubeDeploymentStatusV1());
         return v1;
     }
 

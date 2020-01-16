@@ -13,14 +13,17 @@ import org.mockito.*;
 import org.openpaas.paasta.caas_jenkins.common.CommonService;
 import org.openpaas.paasta.caas_jenkins.common.RestTemplateService;
 import org.openpaas.paasta.caas_jenkins.config.GsonConfig;
+import org.openpaas.paasta.caas_jenkins.exception.CaaSJenkinsServiceException;
 import org.openpaas.paasta.caas_jenkins.model.JpaJenkinsInstance;
 import org.openpaas.paasta.caas_jenkins.model.JpaServiceInstance;
+import org.openpaas.paasta.caas_jenkins.model.caas_custom.KubeDeploymentV1;
 import org.openpaas.paasta.caas_jenkins.model.caas_custom.KubeServiceV1;
 import org.openpaas.paasta.caas_jenkins.repo.JpaJenkinsInstanceRepository;
 import org.openpaas.paasta.caas_jenkins.repo.JpaServiceInstanceRepository;
 import org.openpaas.paasta.caas_jenkins.service.impl.CaaSJenkinsInstanceService;
 import org.openpaas.servicebroker.exception.ServiceBrokerException;
 import org.openpaas.servicebroker.model.CreateServiceInstanceRequest;
+import org.openpaas.servicebroker.model.DeleteServiceInstanceRequest;
 import org.openpaas.servicebroker.model.ServiceInstance;
 import org.openpaas.servicebroker.model.UpdateServiceInstanceRequest;
 import org.slf4j.Logger;
@@ -97,7 +100,7 @@ public class CaaSJenkinsInstanceServiceTest {
     }
 
     @Test
-    public void getServiceInstanceTest() throws Exception {
+    public void createServiceInstanceTest() throws Exception {
         CreateServiceInstanceRequest request = JpaServiceInstanceModel.getCreateServiceInstanceRequest();
         logger.info(request.getServiceDefinition().getName());
         JpaServiceInstance serviceInstance = ServiceInstanceModel.getJpaServiceInstance();
@@ -111,31 +114,80 @@ public class CaaSJenkinsInstanceServiceTest {
         when(restTemplateService.send("/namespaces/"+"namespace"+"/services/"+"jenkins-"+request.getOrganizationGuid(), HttpMethod.GET, null, Map.class)).thenReturn(map);
         Gson gson = new Gson();
         when(common.getGson()).thenReturn(gson);
-
-        //when(gson.toJson(map)).thenReturn("service");
-       // when(common.getGson().fromJson("{\"test\":\"test\"}", KubeServiceV1.class)).thenReturn(v1);
-        /*
-            JpaServiceInstance jpaServiceInstance1  = new JpaServiceInstance(request);
-            String deployment = commonService.deployment(request.getOrganizationGuid());
-            String services = commonService.service(request.getOrganizationGuid());
-            restTemplateService.send("/namespaces/"+namespace+"/deployments", HttpMethod.POST, deployment, Map.class);
-            restTemplateService.send("/namespaces/"+namespace+"/services", HttpMethod.POST, services, Map.class);
-            JpaJenkinsInstance jpaJenkinsInstance = new JpaJenkinsInstance(request.getOrganizationGuid(), request.getServiceInstanceId(), namespace);
-            Thread.sleep(5000);
-            Map result = restTemplateService.send("/namespaces/"+namespace+"/services/"+"jenkins-"+jpaJenkinsInstance.getOrganizationGuid(), HttpMethod.GET, null, Map.class);
-            String service_json = commonService.getGson().toJson(result);
-            KubeServiceV1 v1Service = commonService.getGson().fromJson(service_json, KubeServiceV1.class);
-            jpaServiceInstance1.setDashboardUrl(master_api+":"+v1Service.getSpec().getPorts().get(0).getNodePort().toString());
-            jpaJenkinsInstanceRepository.save(jpaJenkinsInstance);
-            jpaServiceInstance1.withAsync(true);
-
-        */
         ServiceInstance result = caaSJenkinsInstanceService.createServiceInstance(request);
-//        assertThat(result.getServiceInstanceId(), is(serviceInstance.getServiceInstanceId()));
-//        assertThat(result.getServiceDefinitionId(), is(serviceInstance.getServiceDefinitionId()));
-//        assertThat(result.getOrganizationGuid(), is(serviceInstance.getOrganizationGuid()));
-//        assertThat(result.getPlanId(), is(serviceInstance.getPlanId()));
-//        assertThat(result.getSpaceGuid(), is(serviceInstance.getSpaceGuid()));
+    }
+
+    @Test
+    public void createServiceInstanceTest2() throws Exception {
+        CreateServiceInstanceRequest request = JpaServiceInstanceModel.getCreateServiceInstanceRequest();
+        when(jpaJenkinsInstanceRepository.existsByOrganizationGuid(request.getOrganizationGuid())).thenReturn(true);
+        assertThatThrownBy(() -> caaSJenkinsInstanceService.createServiceInstance(request))
+                .isInstanceOf(CaaSJenkinsServiceException.class).hasMessageContaining("Currently, only 1 service instances can be created in this organization.");
+    }
+
+    @Test
+    public void deleteServiceInstanceTest1() throws Exception {
+        DeleteServiceInstanceRequest request = JpaServiceInstanceModel.getDeleteServiceInstanceRequest();
+        when(jpaJenkinsInstanceRepository.existsByServiceInstanceId(request.getServiceInstanceId())).thenReturn(true);
+        JpaJenkinsInstance jpaJenkinsInstance = JpaJenkinsInstanceModel.getJpaJenkinsInstance("org_id","service_id","namespace");
+        when(jpaJenkinsInstanceRepository.findByServiceInstanceId(request.getServiceInstanceId())).thenReturn(jpaJenkinsInstance);
+        caaSJenkinsInstanceService.deleteServiceInstance(request);
+    }
+
+    @Test
+    public void deleteServiceInstanceTest2() throws Exception {
+        DeleteServiceInstanceRequest request = JpaServiceInstanceModel.getDeleteServiceInstanceRequest();
+        when(jpaJenkinsInstanceRepository.existsByServiceInstanceId(request.getServiceInstanceId())).thenReturn(false);
+        caaSJenkinsInstanceService.deleteServiceInstance(request);
+    }
+
+    @Test
+    public void getServiceInstanceTest1() throws Exception {
+        JpaJenkinsInstance jpaJenkinsInstance = JpaJenkinsInstanceModel.getJpaJenkinsInstance("org_id","service_id","namespace");
+        when(jpaJenkinsInstanceRepository.findByServiceInstanceId("Instanceid")).thenReturn(jpaJenkinsInstance);
+        caaSJenkinsInstanceService.getServiceInstance("Instanceid");
+    }
+    /*
+        @Override
+    public JpaServiceInstance getOperationServiceInstance(String Instanceid) {
+        JpaJenkinsInstance jpaJenkinsInstance = jpaJenkinsInstanceRepository.findByServiceInstanceId(Instanceid);
+        Map result = restTemplateService.send("/namespaces/"+namespace+"/deployments/"+"jenkins-"+jpaJenkinsInstance.getOrganizationGuid(), HttpMethod.GET, null, Map.class);
+        String deployment_json = commonService.getGson().toJson(result);
+        KubeDeploymentV1 kubeDeploymentV1 = commonService.getGson().fromJson(deployment_json, KubeDeploymentV1.class);
+        if(kubeDeploymentV1.getStatus().getUnavailableReplicas().intValue() > 0){
+            return null;
+        }
+        JpaServiceInstance instance = new JpaServiceInstance();
+        instance.setServiceInstanceId(jpaJenkinsInstance.getServiceInstanceId());
+        instance.setOrganizationGuid(jpaJenkinsInstance.getOrganizationGuid());
+        return instance;
+    }
+     */
+    @Test
+    public void getOperationServiceInstanceTest1() throws Exception {
+        JpaJenkinsInstance jpaJenkinsInstance = JpaJenkinsInstanceModel.getJpaJenkinsInstance("org_id","service_id","namespace");
+        when(jpaJenkinsInstanceRepository.findByServiceInstanceId("Instanceid")).thenReturn(jpaJenkinsInstance);
+        KubeDeploymentV1 v1 = DeploymentInstanceModel.getKubeDeploymentV1();
+        ObjectMapper mapper = new ObjectMapper();
+        Map map = mapper.convertValue(v1, Map.class);
+        Gson gson = new Gson();
+        when(common.getGson()).thenReturn(gson);
+        when(restTemplateService.send("/namespaces/"+"namespace"+"/deployments/"+"jenkins-"+jpaJenkinsInstance.getOrganizationGuid(), HttpMethod.GET, null, Map.class)).thenReturn(map);
+        caaSJenkinsInstanceService.getOperationServiceInstance("Instanceid");
+    }
+
+    @Test
+    public void getOperationServiceInstanceTest2() throws Exception {
+        JpaJenkinsInstance jpaJenkinsInstance = JpaJenkinsInstanceModel.getJpaJenkinsInstance("org_id","service_id","namespace");
+        when(jpaJenkinsInstanceRepository.findByServiceInstanceId("Instanceid")).thenReturn(jpaJenkinsInstance);
+        KubeDeploymentV1 v1 = DeploymentInstanceModel.getKubeDeploymentV1();
+        ObjectMapper mapper = new ObjectMapper();
+        v1.getStatus().setUnavailableReplicas(-1);
+        Map map = mapper.convertValue(v1, Map.class);
+        Gson gson = new Gson();
+        when(common.getGson()).thenReturn(gson);
+        when(restTemplateService.send("/namespaces/"+"namespace"+"/deployments/"+"jenkins-"+jpaJenkinsInstance.getOrganizationGuid(), HttpMethod.GET, null, Map.class)).thenReturn(map);
+        caaSJenkinsInstanceService.getOperationServiceInstance("Instanceid");
     }
 //
 //    //org 할당된 Service Instance 초과될경우

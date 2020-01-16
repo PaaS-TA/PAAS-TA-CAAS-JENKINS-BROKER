@@ -1,14 +1,12 @@
 package model;
 
 
-import com.google.gson.annotations.SerializedName;
 import io.kubernetes.client.models.*;
 import org.openpaas.paasta.caas_jenkins.model.caas_custom.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class DeploymentInstanceModel {
 
@@ -127,10 +125,18 @@ public class DeploymentInstanceModel {
         v1.setApiVersion("apiVersion");
         v1 = v1.kind("kind");
         v1.setKind("kind");
-        v1 = v1.metadata(new KubeMetadataV1());
-        v1.setMetadata(new KubeMetadataV1());
-        v1 = v1.spec(new V1ServiceSpec());
-        v1.setSpec(new V1ServiceSpec());
+        v1 = v1.metadata(getKubeMetadataV1());
+        v1.setMetadata(getKubeMetadataV1());
+        List<V1ServicePort> ports = new ArrayList<>();
+        V1ServicePort port = new V1ServicePort();
+        port.setPort(1);
+        port.setNodePort(1);
+        port.setName("name");
+        ports.add(port);
+        V1ServiceSpec v1ServiceSpec = new V1ServiceSpec();
+        v1ServiceSpec.setPorts(ports);
+        v1 = v1.spec(v1ServiceSpec);
+        v1.setSpec(v1ServiceSpec);
         v1 = v1.status(new V1ServiceStatus());
         v1.setStatus(new V1ServiceStatus());
         return v1;

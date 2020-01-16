@@ -4,6 +4,8 @@ package org.openpaas.paasta.ondemand.test;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import io.kubernetes.client.models.AppsV1beta1RollbackConfig;
+import io.kubernetes.client.models.V1PodSpec;
 import model.*;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -16,9 +18,7 @@ import org.openpaas.paasta.caas_jenkins.config.GsonConfig;
 import org.openpaas.paasta.caas_jenkins.exception.CaaSJenkinsServiceException;
 import org.openpaas.paasta.caas_jenkins.model.JpaJenkinsInstance;
 import org.openpaas.paasta.caas_jenkins.model.JpaServiceInstance;
-import org.openpaas.paasta.caas_jenkins.model.caas_custom.KubeDeploymentV1;
-import org.openpaas.paasta.caas_jenkins.model.caas_custom.KubeMetadataV1;
-import org.openpaas.paasta.caas_jenkins.model.caas_custom.KubeServiceV1;
+import org.openpaas.paasta.caas_jenkins.model.caas_custom.*;
 import org.openpaas.paasta.caas_jenkins.repo.JpaJenkinsInstanceRepository;
 import org.openpaas.paasta.caas_jenkins.repo.JpaServiceInstanceRepository;
 import org.openpaas.paasta.caas_jenkins.service.impl.CaaSJenkinsInstanceService;
@@ -67,6 +67,9 @@ public class CaaSJenkinsInstanceServiceTest {
 
     @Mock
     private Executor serviceBExecutorService;
+
+    @Spy
+    GsonConfig gsonConfig;
 
     @Mock
     CommonService common;
@@ -195,6 +198,68 @@ public class CaaSJenkinsInstanceServiceTest {
         v1.equals(new KubeMetadataV1());
         v1.hashCode();
         v1.toString();
+        KubeDeploymentStatusV1 v2 = new KubeDeploymentStatusV1();
+        v2.addConditionsItem(null);
+        v2.addConditionsItem(new KubeDeploymentConditionV1());
+        v2.equals(v2);
+        v2.equals(null);
+        v2.equals(new KubeDeploymentStatusV1());
+        v2.hashCode();
+        v2.toString();
+
+        KubeDeploymentV1 v3  = new KubeDeploymentV1();
+        v3.equals(v3);
+        v3.equals(null);
+        v3.equals(new KubeDeploymentV1());
+        v3.hashCode();
+        v3.toString();
+
+        KubeDeploymentSpecV1 v4 = new KubeDeploymentSpecV1();
+        v4.progressDeadlineSeconds(1);
+        v4.setProgressDeadlineSeconds(1);
+        v4.rollbackTo(new AppsV1beta1RollbackConfig());
+        v4.setRollbackTo((new AppsV1beta1RollbackConfig()));
+        v4.equals(v4);
+        v4.equals(null);
+        v4.equals(new KubeDeploymentSpecV1());
+        v4.hashCode();
+        v4.toString();
+
+        KubeServiceV1 v5 = new KubeServiceV1();
+        v5.equals(v5);
+        v5.equals(null);
+        v5.equals(new KubeServiceV1());
+        v5.hashCode();
+        v5.toString();
+
+        JpaServiceInstance jpa = new JpaServiceInstance();
+        jpa.setUserId("id");
+        jpa.getUserId();
+        jpa.setCaasAccountTokenName("token");
+        jpa.getCaasAccountTokenName();
+        jpa.setCaasAccountName("name");
+        jpa.getCaasAccountName();
+        jpa.setCaasNamespace("namespace");
+        jpa.getCaasNamespace();
+        jpa.getDashboardUrl();
+        jpa.setPlanId("plan");
+        jpa.getPlanId();
+        jpa.setServiceDefinitionId("id");
+        jpa.getServiceDefinitionId();
+        jpa.setSpaceGuid("space");
+        jpa.getSpaceGuid();
+
+        KubeTemplateV1 v11 = new KubeTemplateV1();
+        v11.metadata(DeploymentInstanceModel.getKubeMetadataV1());
+        v11.setMetadata(DeploymentInstanceModel.getKubeMetadataV1());
+        v11.spec(new V1PodSpec());
+        v11.setSpec(new V1PodSpec());
+        v11.equals(v11);
+        v11.equals(null);
+        v11.equals(new KubeTemplateV1());
+        v11.hashCode();
+        v11.toString();
+
         JpaJenkinsInstance jpaJenkinsInstance1 = JpaJenkinsInstanceModel.getJpaJenkinsInstance("org_id","service_id","namespace");
         when(jpaJenkinsInstanceRepository.findByServiceInstanceId("Instanceid")).thenReturn(jpaJenkinsInstance1);
         caaSJenkinsInstanceService.getServiceInstance("Instanceid");

@@ -121,19 +121,16 @@ public class CommonService {
         LOGGER.info("docker_repo_uri::::::" + docker_repo_uri + "   username:::::" + username + "    password::::::" + password);
         String auth = Base64Utils.encodeToString((username + ":" + password).getBytes(StandardCharsets.UTF_8));
         LOGGER.info("AUTH ::::: " + auth);
-        Map auth_property = new HashMap<String,String>(){{
-            put("username", username);
-            put("password", password);
-            put("auth", auth);
-        }};
+        Map auth_property = new HashMap<String,String>();
+        auth_property.put("username", username);
+        auth_property.put("password", password);
+        auth_property.put("auth", auth);
         LOGGER.info("auth_property ::::: " + auth_property);
-        Map auth_value = new HashMap<String,Map<?,?>>(){{
-            put(docker_repo_uri, auth_property);
-        }};
+        Map auth_value = new HashMap<String,Map<?,?>>();
+        auth_value.put(docker_repo_uri, auth_property);
         LOGGER.info("auth_value ::::: " + auth_value);
-        Map auth_result = new HashMap<String,Map<?,?>>(){{
-            put("auths", auth_value);
-        }};
+        Map auth_result = new HashMap<String,Map<?,?>>();
+        auth_result.put("auths", auth_value);
         LOGGER.info("auth_result ::::: " + auth_result);
         JSONObject jsonObject = new JSONObject(auth_result);
         LOGGER.info(jsonObject.toString());

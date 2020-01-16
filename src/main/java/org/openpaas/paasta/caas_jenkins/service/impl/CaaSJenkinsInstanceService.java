@@ -43,14 +43,11 @@ public class CaaSJenkinsInstanceService implements ServiceInstanceService {
     @Value("${caas.master_api}")
     public String master_api;
 
-    private final JpaServiceInstanceRepository jpaServiceInstanceRepository;
-
     private final JpaJenkinsInstanceRepository jpaJenkinsInstanceRepository;
 
-    @Autowired public CaaSJenkinsInstanceService(RestTemplateService restTemplateService, CommonService commonService,JpaServiceInstanceRepository jpaServiceInstanceRepository, JpaJenkinsInstanceRepository jpaJenkinsInstanceRepository){
+    @Autowired public CaaSJenkinsInstanceService(RestTemplateService restTemplateService, CommonService commonService, JpaJenkinsInstanceRepository jpaJenkinsInstanceRepository){
         this.restTemplateService = restTemplateService;
         this.commonService = commonService;
-        this.jpaServiceInstanceRepository = jpaServiceInstanceRepository;
         this.jpaJenkinsInstanceRepository = jpaJenkinsInstanceRepository;
     }
 

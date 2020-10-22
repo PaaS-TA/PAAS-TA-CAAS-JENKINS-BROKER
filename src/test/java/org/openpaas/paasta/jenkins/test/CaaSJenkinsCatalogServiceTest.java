@@ -8,14 +8,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
-import org.openpaas.paasta.caas_jenkins.common.CommonService;
-import org.openpaas.paasta.caas_jenkins.common.RestTemplateService;
-import org.openpaas.paasta.caas_jenkins.config.BrokerConfig;
-import org.openpaas.paasta.caas_jenkins.config.CatalogConfig;
-import org.openpaas.paasta.caas_jenkins.config.GsonConfig;
-import org.openpaas.paasta.caas_jenkins.config.RestTemplateConfig;
-import org.openpaas.paasta.caas_jenkins.service.impl.CaaSJenkinsCatalogService;
-import org.openpaas.paasta.caas_jenkins.service.impl.CaaSJenkinsInstanceService;
+import org.openpaas.paasta.container.platform.jenkins.common.CommonService;
+import org.openpaas.paasta.container.platform.jenkins.common.RestTemplateService;
+import org.openpaas.paasta.container.platform.jenkins.config.BrokerConfig;
+import org.openpaas.paasta.container.platform.jenkins.config.CatalogConfig;
+import org.openpaas.paasta.container.platform.jenkins.config.GsonConfig;
+import org.openpaas.paasta.container.platform.jenkins.config.RestTemplateConfig;
+import org.openpaas.paasta.container.platform.jenkins.service.impl.ContainerPlatformJenkinsCatalogService;
+import org.openpaas.paasta.container.platform.jenkins.service.impl.ContainerPlatformJenkinsInstanceService;
 import org.openpaas.servicebroker.controller.CatalogController;
 import org.openpaas.servicebroker.model.Catalog;
 import org.openpaas.servicebroker.service.CatalogService;
@@ -41,10 +41,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class CaaSJenkinsCatalogServiceTest {
+public class ContainerPlatformJenkinsCatalogServiceTest {
 
     @InjectMocks
-    CaaSJenkinsInstanceService caaSJenkinsInstanceService;
+    ContainerPlatformJenkinsInstanceService containerPlatformJenkinsInstanceService;
 
 
     @InjectMocks
@@ -168,7 +168,7 @@ public class CaaSJenkinsCatalogServiceTest {
     }
 //
     @Test
-    public void CaaSJenkinsCatalogService() throws Exception {
+    public void ContainerPlatformJenkinsCatalogService() throws Exception {
 
         ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_ID", "54e2de61-de84-4b9c-afc3-88d08aadfcb6");
         ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_NAME", "jenkins");
@@ -183,10 +183,10 @@ public class CaaSJenkinsCatalogServiceTest {
         ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_PLAN1_TYPE", "C");
         catalog = catalogConfig.catalog();
         //when(new OnDemandCatalogService(catalog)).thenReturn(onDemandCatalogService);
-        CaaSJenkinsCatalogService caaSJenkinsCatalogService = new CaaSJenkinsCatalogService(catalog);
+        ContainerPlatformJenkinsCatalogService containerPlatformJenkinsCatalogService = new ContainerPlatformJenkinsCatalogService(catalog);
 
-        assertThat(caaSJenkinsCatalogService.getCatalog(), is(catalog));
-        assertThat(caaSJenkinsCatalogService.getServiceDefinition("54e2de61-de84-4b9c-afc3-88d08aadfcb6").getId(), is(catalog.getServiceDefinitions().get(0).getId()));
+        assertThat(containerPlatformJenkinsCatalogService.getCatalog(), is(catalog));
+        assertThat(containerPlatformJenkinsCatalogService.getServiceDefinition("54e2de61-de84-4b9c-afc3-88d08aadfcb6").getId(), is(catalog.getServiceDefinitions().get(0).getId()));
 
     }
 

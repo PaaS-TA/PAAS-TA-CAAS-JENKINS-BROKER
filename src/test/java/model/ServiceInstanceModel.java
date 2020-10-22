@@ -1,6 +1,6 @@
 package model;
 
-import org.openpaas.paasta.caas_jenkins.model.JpaServiceInstance;
+import org.openpaas.paasta.container.platform.jenkins.model.JpaServiceInstance;
 import org.openpaas.servicebroker.model.ServiceInstance;
 
 public class ServiceInstanceModel {

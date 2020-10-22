@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: paas-ta-caas-jenkins-broker
+    name: paas-ta-container-platform-jenkins-broker
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://<%= link('caas-mariadb-link').instances[0].address %>:<%= link('caas-mariadb-link').p('port') %>/broker?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Seoul&useLegacyDatetimeCode=false
@@ -47,11 +47,10 @@ jenkins:
   secret_file_path: "<%= p('jenkins.secret_file_path')%>"
   username: "<%= link('private-image-repository-link').p('image_repository.auth.username') %>"
   password: "<%= p('jenkins.password')%>"
-  docker_repository_url: <%= link('private-image-repository-link').instances[0].address %>:<%= link('private-image-repository-link').p('image_repository.port') %>
+  docker_repository_url: <%= p('caas.repository.ip')%>:<%= p('caas.repository.port')%>
 
-caas:
-  authorization:
-    id: <%= link('caas-common-api-link').p('authorization.id')%>
-    password: <%= link('caas-common-api-link').p('authorization.password')%>
-  api: http://<%= link('caas-api-link').instances[0].address %>:<%= link('caas-api-link').p('server.port')%>
-  master_api: http://<%= p('caas.master_ip')%>
+container_platform:
+  k8s_api_server_ip: https://<%= p('caas.k8s_api_server_ip')%>
+  k8s_api_server_port: <%= p('caas.k8s_api_server_port')%>
+  k8s_auth_basic: <%= p('caas.k8s_auth_basic')%>
+  dashboard_ip: http://<%= p('caas.k8s_api_server_ip')%>

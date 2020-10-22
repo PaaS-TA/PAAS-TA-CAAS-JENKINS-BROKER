@@ -12,16 +12,16 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.mockito.*;
-import org.openpaas.paasta.caas_jenkins.common.CommonService;
-import org.openpaas.paasta.caas_jenkins.common.RestTemplateService;
-import org.openpaas.paasta.caas_jenkins.config.GsonConfig;
-import org.openpaas.paasta.caas_jenkins.exception.CaaSJenkinsServiceException;
-import org.openpaas.paasta.caas_jenkins.model.JpaJenkinsInstance;
-import org.openpaas.paasta.caas_jenkins.model.JpaServiceInstance;
-import org.openpaas.paasta.caas_jenkins.model.caas_custom.*;
-import org.openpaas.paasta.caas_jenkins.repo.JpaJenkinsInstanceRepository;
-import org.openpaas.paasta.caas_jenkins.repo.JpaServiceInstanceRepository;
-import org.openpaas.paasta.caas_jenkins.service.impl.CaaSJenkinsInstanceService;
+import org.openpaas.paasta.container.platform.jenkins.common.CommonService;
+import org.openpaas.paasta.container.platform.jenkins.common.RestTemplateService;
+import org.openpaas.paasta.container.platform.jenkins.config.GsonConfig;
+import org.openpaas.paasta.container.platform.jenkins.exception.ContainerPlatformJenkinsServiceException;
+import org.openpaas.paasta.container.platform.jenkins.model.JpaJenkinsInstance;
+import org.openpaas.paasta.container.platform.jenkins.model.JpaServiceInstance;
+import org.openpaas.paasta.container.platform.jenkins.model.k8s.*;
+import org.openpaas.paasta.container.platform.jenkins.repo.JpaJenkinsInstanceRepository;
+import org.openpaas.paasta.container.platform.jenkins.repo.JpaServiceInstanceRepository;
+import org.openpaas.paasta.container.platform.jenkins.service.impl.ContainerPlatformJenkinsInstanceService;
 import org.openpaas.servicebroker.exception.ServiceBrokerException;
 import org.openpaas.servicebroker.model.CreateServiceInstanceRequest;
 import org.openpaas.servicebroker.model.DeleteServiceInstanceRequest;
@@ -43,12 +43,12 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class CaaSJenkinsInstanceServiceTest {
+public class ContainerPlatformJenkinsInstanceServiceTest {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @InjectMocks
-    CaaSJenkinsInstanceService caaSJenkinsInstanceService;
+    ContainerPlatformJenkinsInstanceService containerPlatformJenkinsInstanceService;
 
     @Mock
     JpaServiceInstanceRepository jpaServiceInstanceRepository;
@@ -83,23 +83,23 @@ public class CaaSJenkinsInstanceServiceTest {
         MockitoAnnotations.initMocks(this);
         mockServer = MockRestServiceServer.createServer(restTemplate);
         service = new CompletableFuture();
-        ReflectionTestUtils.setField(caaSJenkinsInstanceService, "namespace", "namespace");
-        ReflectionTestUtils.setField(caaSJenkinsInstanceService, "caas_api_uri", "caas_api_uri");
-        ReflectionTestUtils.setField(caaSJenkinsInstanceService, "master_api", "master_api");
+        ReflectionTestUtils.setField(containerPlatformJenkinsInstanceService, "namespace", "namespace");
+        ReflectionTestUtils.setField(containerPlatformJenkinsInstanceService, "caas_api_uri", "caas_api_uri");
+        ReflectionTestUtils.setField(containerPlatformJenkinsInstanceService, "master_api", "master_api");
 
         print();
     }
 
     private void print() {
-        logger.info(caaSJenkinsInstanceService.namespace);
-        logger.info(caaSJenkinsInstanceService.caas_api_uri);
-        logger.info(caaSJenkinsInstanceService.master_api);
+        logger.info(containerPlatformJenkinsInstanceService.namespace);
+        logger.info(containerPlatformJenkinsInstanceService.caas_api_uri);
+        logger.info(containerPlatformJenkinsInstanceService.master_api);
     }
 
     @Test
     public void updateServiceInstanceTest() throws Exception {
         UpdateServiceInstanceRequest request = ServiceInstanceRequestModel.getUpdateServiceInstanceRequest();
-        assertThatThrownBy(() -> caaSJenkinsInstanceService.updateServiceInstance(request))
+        assertThatThrownBy(() -> containerPlatformJenkinsInstanceService.updateServiceInstance(request))
                 .isInstanceOf(ServiceBrokerException.class).hasMessageContaining("Not Supported");
     }
 
@@ -118,15 +118,15 @@ public class CaaSJenkinsInstanceServiceTest {
         when(restTemplateService.send("/namespaces/"+"namespace"+"/services/"+"jenkins-"+request.getOrganizationGuid(), HttpMethod.GET, null, Map.class)).thenReturn(map);
         Gson gson = new Gson();
         when(common.getGson()).thenReturn(gson);
-        ServiceInstance result = caaSJenkinsInstanceService.createServiceInstance(request);
+        ServiceInstance result = containerPlatformJenkinsInstanceService.createServiceInstance(request);
     }
 
     @Test
     public void createServiceInstanceTest2() throws Exception {
         CreateServiceInstanceRequest request = JpaServiceInstanceModel.getCreateServiceInstanceRequest();
         when(jpaJenkinsInstanceRepository.existsByOrganizationGuid(request.getOrganizationGuid())).thenReturn(true);
-        assertThatThrownBy(() -> caaSJenkinsInstanceService.createServiceInstance(request))
-                .isInstanceOf(CaaSJenkinsServiceException.class).hasMessageContaining("Currently, only 1 service instances can be created in this organization.");
+        assertThatThrownBy(() -> containerPlatformJenkinsInstanceService.createServiceInstance(request))
+                .isInstanceOf(ContainerPlatformJenkinsServiceException.class).hasMessageContaining("Currently, only 1 service instances can be created in this organization.");
     }
 
     @Test
@@ -135,21 +135,21 @@ public class CaaSJenkinsInstanceServiceTest {
         when(jpaJenkinsInstanceRepository.existsByServiceInstanceId(request.getServiceInstanceId())).thenReturn(true);
         JpaJenkinsInstance jpaJenkinsInstance = JpaJenkinsInstanceModel.getJpaJenkinsInstance("org_id","service_id","namespace");
         when(jpaJenkinsInstanceRepository.findByServiceInstanceId(request.getServiceInstanceId())).thenReturn(jpaJenkinsInstance);
-        caaSJenkinsInstanceService.deleteServiceInstance(request);
+        containerPlatformJenkinsInstanceService.deleteServiceInstance(request);
     }
 
     @Test
     public void deleteServiceInstanceTest2() throws Exception {
         DeleteServiceInstanceRequest request = JpaServiceInstanceModel.getDeleteServiceInstanceRequest();
         when(jpaJenkinsInstanceRepository.existsByServiceInstanceId(request.getServiceInstanceId())).thenReturn(false);
-        caaSJenkinsInstanceService.deleteServiceInstance(request);
+        containerPlatformJenkinsInstanceService.deleteServiceInstance(request);
     }
 
     @Test
     public void getServiceInstanceTest1() throws Exception {
         JpaJenkinsInstance jpaJenkinsInstance = JpaJenkinsInstanceModel.getJpaJenkinsInstance("org_id","service_id","namespace");
         when(jpaJenkinsInstanceRepository.findByServiceInstanceId("Instanceid")).thenReturn(jpaJenkinsInstance);
-        caaSJenkinsInstanceService.getServiceInstance("Instanceid");
+        containerPlatformJenkinsInstanceService.getServiceInstance("Instanceid");
     }
 
     @Test
@@ -162,7 +162,7 @@ public class CaaSJenkinsInstanceServiceTest {
         Gson gson = new Gson();
         when(common.getGson()).thenReturn(gson);
         when(restTemplateService.send("/namespaces/"+"namespace"+"/deployments/"+"jenkins-"+jpaJenkinsInstance.getOrganizationGuid(), HttpMethod.GET, null, Map.class)).thenReturn(map);
-        caaSJenkinsInstanceService.getOperationServiceInstance("Instanceid");
+        containerPlatformJenkinsInstanceService.getOperationServiceInstance("Instanceid");
     }
 
     @Test
@@ -176,7 +176,7 @@ public class CaaSJenkinsInstanceServiceTest {
         Gson gson = new Gson();
         when(common.getGson()).thenReturn(gson);
         when(restTemplateService.send("/namespaces/"+"namespace"+"/deployments/"+"jenkins-"+jpaJenkinsInstance.getOrganizationGuid(), HttpMethod.GET, null, Map.class)).thenReturn(map);
-        caaSJenkinsInstanceService.getOperationServiceInstance("Instanceid");
+        containerPlatformJenkinsInstanceService.getOperationServiceInstance("Instanceid");
     }
 
     @Test
@@ -286,7 +286,7 @@ public class CaaSJenkinsInstanceServiceTest {
         c1.toString();
         JpaJenkinsInstance jpaJenkinsInstance1 = JpaJenkinsInstanceModel.getJpaJenkinsInstance("org_id","service_id","namespace");
         when(jpaJenkinsInstanceRepository.findByServiceInstanceId("Instanceid")).thenReturn(jpaJenkinsInstance1);
-        caaSJenkinsInstanceService.getServiceInstance("Instanceid");
+        containerPlatformJenkinsInstanceService.getServiceInstance("Instanceid");
 
 
     }

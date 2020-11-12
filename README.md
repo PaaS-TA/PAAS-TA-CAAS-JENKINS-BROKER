@@ -37,3 +37,7 @@ $ gradle build
 | Hibernate Validator            | 5.1.0   |
 | Json Path                      | 0.9.1   |
 | Jacoco                         | 0.7.9+  |
+
+## 라이센스
+
+[Apache-2.0 License](http://www.apache.org/licenses/LICENSE-2.0)

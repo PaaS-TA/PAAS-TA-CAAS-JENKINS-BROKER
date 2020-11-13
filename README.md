@@ -41,7 +41,7 @@ PAAS-TA-CAAS-JENKINS-BROKER의 개발 환경은 다음과 같습니다.
 | Jacoco                         | 0.7.9+  |
 
 ## 라이선스
-PAAS-TA-CAAS-JENKINS-BROKER는 다음과 같은 라이선스의 오픈 소스를 사용합니다.
+PAAS-TA-CAAS-JENKINS-BROKER는 다음과 같은 라이선스를 사용합니다.
 
 [Apache-2.0 License](http://www.apache.org/licenses/LICENSE-2.0)
 

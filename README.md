@@ -38,6 +38,6 @@ $ gradle build
 | Json Path                      | 0.9.1   |
 | Jacoco                         | 0.7.9+  |
 
-## 라이센스
+## 라이선스
 
 [Apache-2.0 License](http://www.apache.org/licenses/LICENSE-2.0)

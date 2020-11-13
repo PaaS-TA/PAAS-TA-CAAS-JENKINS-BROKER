@@ -12,7 +12,7 @@ PaaS-TA 에서 제공하는 Jenkins 서비스 브로커로 클라우드 컨트�
 ## 시작하기
 
 Jenkins 서비스 브로커가 수행하는 서비스 관리 작업은 다음과 같습니다.
-- Catalog : Jenkins 서비스 인스턴스 카탈로그 조회
+- Catalog : Jenkins 서비스 카탈로그 조회
 - Provisioning : Jenkins 서비스 인스턴스 생성 ( parameters "owner", "org_name" 필수 )
 - Updateprovisioning : Jenkins 서비스 인스턴스 갱신
 - Deprovisioning : Jenkins 서비스 인스턴스 삭제

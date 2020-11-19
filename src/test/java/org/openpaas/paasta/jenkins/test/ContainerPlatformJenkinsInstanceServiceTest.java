@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.mockito.*;
 import org.openpaas.paasta.container.platform.jenkins.common.CommonService;
-import org.openpaas.paasta.container.platform.jenkins.common.RestTemplateService;
 import org.openpaas.paasta.container.platform.jenkins.config.GsonConfig;
 import org.openpaas.paasta.container.platform.jenkins.exception.ContainerPlatformJenkinsServiceException;
 import org.openpaas.paasta.container.platform.jenkins.model.JpaJenkinsInstance;
@@ -63,9 +62,6 @@ public class ContainerPlatformJenkinsInstanceServiceTest {
     private RestTemplate restTemplate;
 
     @Mock
-    RestTemplateService restTemplateService;
-
-    @Mock
     private Executor serviceBExecutorService;
 
     @Spy
@@ -92,8 +88,6 @@ public class ContainerPlatformJenkinsInstanceServiceTest {
 
     private void print() {
         logger.info(containerPlatformJenkinsInstanceService.namespace);
-        logger.info(containerPlatformJenkinsInstanceService.caas_api_uri);
-        logger.info(containerPlatformJenkinsInstanceService.master_api);
     }
 
     @Test
@@ -115,7 +109,6 @@ public class ContainerPlatformJenkinsInstanceServiceTest {
         when(jpaJenkinsInstanceRepository.existsByOrganizationGuid(request.getOrganizationGuid())).thenReturn(false);
         when(common.deployment(request.getOrganizationGuid())).thenReturn("deployment");
         when(common.service(request.getOrganizationGuid())).thenReturn("service");
-        when(restTemplateService.send("/namespaces/"+"namespace"+"/services/"+"jenkins-"+request.getOrganizationGuid(), HttpMethod.GET, null, Map.class)).thenReturn(map);
         Gson gson = new Gson();
         when(common.getGson()).thenReturn(gson);
         ServiceInstance result = containerPlatformJenkinsInstanceService.createServiceInstance(request);
@@ -161,7 +154,6 @@ public class ContainerPlatformJenkinsInstanceServiceTest {
         Map map = mapper.convertValue(v1, Map.class);
         Gson gson = new Gson();
         when(common.getGson()).thenReturn(gson);
-        when(restTemplateService.send("/namespaces/"+"namespace"+"/deployments/"+"jenkins-"+jpaJenkinsInstance.getOrganizationGuid(), HttpMethod.GET, null, Map.class)).thenReturn(map);
         containerPlatformJenkinsInstanceService.getOperationServiceInstance("Instanceid");
     }
 
@@ -175,7 +167,6 @@ public class ContainerPlatformJenkinsInstanceServiceTest {
         Map map = mapper.convertValue(v1, Map.class);
         Gson gson = new Gson();
         when(common.getGson()).thenReturn(gson);
-        when(restTemplateService.send("/namespaces/"+"namespace"+"/deployments/"+"jenkins-"+jpaJenkinsInstance.getOrganizationGuid(), HttpMethod.GET, null, Map.class)).thenReturn(map);
         containerPlatformJenkinsInstanceService.getOperationServiceInstance("Instanceid");
     }
 

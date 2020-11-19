@@ -9,7 +9,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.openpaas.paasta.container.platform.jenkins.common.CommonService;
-import org.openpaas.paasta.container.platform.jenkins.common.RestTemplateService;
 import org.openpaas.paasta.container.platform.jenkins.config.BrokerConfig;
 import org.openpaas.paasta.container.platform.jenkins.config.CatalogConfig;
 import org.openpaas.paasta.container.platform.jenkins.config.GsonConfig;
@@ -52,9 +51,6 @@ public class ContainerPlatformJenkinsCatalogServiceTest {
 
     @Mock
     CatalogService catalogService;
-
-    @Mock
-    RestTemplateService restTemplateService;
 
     @Mock
     CommonService commonService;
